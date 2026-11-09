@@ -6,3 +6,6 @@ __pycache__/
 
 # data
 *.csv
+
+# gcp keys
+waterpot-*.json
