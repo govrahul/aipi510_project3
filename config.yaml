@@ -1,0 +1,33 @@
+# Settings for the water potability model.
+# To try different settings, change them here and re-run the notebook.
+
+seed: 510
+
+gcs:
+  project: waterpot-513821
+  bucket: aipi510-water-bucket
+  file: train.csv
+
+wandb:
+  entity: water-potability-510
+  project: water-potability-510-project3
+  run_name: baseline
+
+data:
+  target: Potability
+  # home-testable features only (column names as they appear in train.csv)
+  features:
+    - scaler__ph
+    - scaler__Hardness
+    - scaler__Chloramines
+    - scaler__Sulfate
+    - scaler__Conductivity
+
+split:
+  val_size: 0.2   # 80% train / 20% validation
+
+model:
+  n_estimators: 200
+  max_depth: 10
+  min_samples_leaf: 5
+  class_weight: balanced
