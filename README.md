@@ -6,7 +6,7 @@ All required packages are in `requirements.txt` (NOTE: before installing google-
 
 ## Data
 
-The data was sourced from Kaggle: https://www.kaggle.com/datasets/uom190346a/water-quality-and-potability.
+The data was sourced from Kaggle: https://www.kaggle.com/datasets/uom190346a/water-quality-and-potability. NOTE: this data is synthetically generated. All models and any inference done should have this in mind.
 
 To clean the data and split it into a training and test set, put the raw CSV into the Data/ folder and run:
 
@@ -25,6 +25,11 @@ All data was added to a Google Cloud database for storage. To run scripts involv
 ```bash
 export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your-service-account-key.json"
 pip install google-cloud-storage
+```
+
+To push data to cloud, first clean the data (above) and then run:
+```bash
+python Data/add_data_to_cloud.py
 ```
 
 ---

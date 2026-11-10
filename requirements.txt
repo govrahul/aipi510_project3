@@ -1,4 +1,5 @@
 pandas
-google-cloud-storage
+google-cloud-storage # google cloud data storage
 scikit-learn
 matplotlib
+wandb # weights and biases
