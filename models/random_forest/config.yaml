@@ -11,7 +11,7 @@ gcs:
 wandb:
   entity: water-potability-510
   project: water-potability-510-project3
-  run_name: baseline
+  run_name: random_forest_baseline
 
 data:
   target: Potability

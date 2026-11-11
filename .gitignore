@@ -9,3 +9,8 @@ __pycache__/
 
 # gcp keys
 waterpot-*.json
+
+# artifacts
+wandb/
+artifacts/
+*.joblib
