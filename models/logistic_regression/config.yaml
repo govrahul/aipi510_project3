@@ -1,0 +1,30 @@
+# settings for the logistic regression experiment
+
+seed: 510
+
+gcs:
+  project: waterpot-513821
+  bucket: aipi510-water-bucket
+  file: train.csv
+
+wandb:
+  entity: water-potability-510
+  project: water-potability-510-project3
+  run_name: log_reg
+
+data:
+  target: Potability
+  # home-testable features only (column names as they appear in train.csv)
+  features:
+    - scaler__ph
+    - scaler__Hardness
+    - scaler__Chloramines
+    - scaler__Sulfate
+    - scaler__Conductivity
+
+split:
+  val_size: 0.2   # 80% train / 20% validation
+
+model:
+  random_state: 510
+  class_weight: balanced
