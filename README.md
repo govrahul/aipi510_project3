@@ -14,6 +14,14 @@ To clean the data and split it into a training and test set, put the raw CSV int
 python Data/clean_data.py
 ```
 
+To reproduce the exploratory data analysis plots and cleaned dataset outputs from the notebook, run:
+
+```bash
+python Data/cleaning_and_EDA.py
+```
+
+The script writes three plots, `water_potability_clean.csv`, and `feature_metadata.json` to `Data/eda_output/`.
+
 ## Cloud Storage
 
 All data was added to a Google Cloud database for storage. To run scripts involving GCP, follow these steps:
@@ -30,6 +38,23 @@ pip install google-cloud-storage
 To push data to cloud, first clean the data (above) and then run:
 ```bash
 python Data/add_data_to_cloud.py
+```
+
+## Modeling
+
+All modeling can be run with:
+
+```bash
+python models/logistic_regression/logistic_regression.py
+python models/random_forest/random_forest_baseline.py
+```
+
+Their configurations are in their respective `config.yaml` files. Both files utilize Weights & Biases for model logging which requires an API key. Instructions for this, as well as local setup with it, can be done with the command `wandb login`.
+
+To evaluate our best model, the random forest, run:
+
+```bash
+python models/test_best_model.py
 ```
 
 ---
