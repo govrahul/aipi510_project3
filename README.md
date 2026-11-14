@@ -51,11 +51,28 @@ python models/random_forest/random_forest_baseline.py
 
 Their configurations are in their respective `config.yaml` files. Both files utilize Weights & Biases for model logging which requires an API key. Instructions for this, as well as local setup with it, can be done with the command `wandb login`.
 
+To export the random forest together with the preprocessing steps for inference, run:
+
+```bash
+python models/export_pipeline_model.py
+```
+
+This writes `models/water_potability_pipeline.joblib`.
+
 To evaluate our best model, the random forest, run:
 
 ```bash
 python models/test_best_model.py
 ```
+
+The model evaluation results are shown below:
+
+| Model | Validation F1 | Validation Accuracy |
+| :---: | :---: | :---: |
+| Random Forest | .51507 | .66221 |
+| Logistic Regression | .42358 | .49618 |
+
+The best model was the **random forest** model, and its test metrics were F1 = .52584 and accuracy = .67835.
 
 ---
 Developers: Rahul Govil and Daniel Yaari
