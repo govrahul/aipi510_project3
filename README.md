@@ -164,7 +164,7 @@ The model evaluation results are shown below:
 | Random Forest | .51507 | .66221 |
 | Logistic Regression | .42358 | .49618 |
 
-The best model was the **random forest** model, and its test metrics were F1 = .52584 and accuracy = .67835.
+The best model was the **random forest** model, and its test metrics were F1 = 0.5219 and accuracy = 0.6509.
 
 ---
 Developers: Rahul Govil and Daniel Yaari
