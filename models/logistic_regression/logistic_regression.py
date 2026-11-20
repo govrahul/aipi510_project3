@@ -5,6 +5,7 @@ From the repository root:
     python models/logistic_regression/logistic_regression.py --config path/to/config.yaml
 """
 import argparse
+import os
 from pathlib import Path
 
 import joblib
@@ -43,6 +44,16 @@ def main() -> None:
         config = yaml.safe_load(config_file)
 
     seed = config["seed"]
+
+    # Let users point at their own GCP project/bucket and W&B account via env vars
+    for env_var, (section, key) in {
+        "GCP_PROJECT": ("gcs", "project"),
+        "GCS_BUCKET": ("gcs", "bucket"),
+        "WANDB_ENTITY": ("wandb", "entity"),
+        "WANDB_PROJECT": ("wandb", "project"),
+    }.items():
+        if os.environ.get(env_var):
+            config[section][key] = os.environ[env_var]
 
     client = storage.Client(project=config["gcs"]["project"])
     bucket = client.bucket(config["gcs"]["bucket"])

@@ -11,6 +11,8 @@ Run:
     python train.py --config my_config.yaml
 """
 import argparse
+import os
+from pathlib import Path
 
 import joblib
 import matplotlib
@@ -28,7 +30,7 @@ from sklearn.model_selection import train_test_split
 
 # 1. Which config file to use
 parser = argparse.ArgumentParser()
-parser.add_argument("--config", default="config.yaml")
+parser.add_argument("--config", default=str(Path(__file__).resolve().parent / "config.yaml"))
 args = parser.parse_args()
 
 # 2. Load the settings
@@ -36,6 +38,16 @@ with open(args.config) as f:
     config = yaml.safe_load(f)
 
 SEED = config["seed"]
+
+# Let users point at their own GCP project/bucket and W&B account via env vars
+for env_var, (section, key) in {
+    "GCP_PROJECT": ("gcs", "project"),
+    "GCS_BUCKET": ("gcs", "bucket"),
+    "WANDB_ENTITY": ("wandb", "entity"),
+    "WANDB_PROJECT": ("wandb", "project"),
+}.items():
+    if os.environ.get(env_var):
+        config[section][key] = os.environ[env_var]
 
 # 3. Download train.csv from Google Cloud Storage
 client = storage.Client(project=config["gcs"]["project"])

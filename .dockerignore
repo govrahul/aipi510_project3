@@ -1,0 +1,14 @@
+# never bake secrets or data into the image
+.env
+*.json
+*.csv
+*.joblib
+wandb/
+artifacts/
+Data/eda_output/
+# dev clutter
+.git/
+.venv/
+__pycache__/
+.vscode/
+.DS_Store
