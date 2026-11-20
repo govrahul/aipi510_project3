@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import joblib
@@ -5,8 +6,8 @@ import pandas as pd
 import wandb
 from sklearn.metrics import accuracy_score, f1_score
 
-WANDB_ENTITY = "water-potability-510"
-WANDB_PROJECT = "water-potability-510-project3"
+WANDB_ENTITY = os.environ.get("WANDB_ENTITY", "water-potability-510")
+WANDB_PROJECT = os.environ.get("WANDB_PROJECT", "water-potability-510-project3")
 MODEL_RUN_NAME = "random_forest_baseline"
 TARGET_COLUMN = "Potability"
 PROJECT_ROOT = Path(__file__).resolve().parents[1]

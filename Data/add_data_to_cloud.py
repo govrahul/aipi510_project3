@@ -1,7 +1,8 @@
 from google.cloud import storage
 import os
 
-BUCKET_NAME = 'aipi510-water-bucket'
+# Set GCS_BUCKET to your own bucket (bucket names are globally unique)
+BUCKET_NAME = os.environ.get('GCS_BUCKET', 'aipi510-water-bucket')
 DATA_DIR = 'Data'
 FILES_TO_UPLOAD = ['water_potability.csv', 'train.csv', 'test.csv']
 
