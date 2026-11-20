@@ -41,6 +41,22 @@ rf()     { python models/random_forest/random_forest_baseline.py; }
 logreg() { python models/logistic_regression/logistic_regression.py; }
 test()   { python models/test_best_model.py; }
 
+# W&B can take a minute to show a just-finished run's metrics,
+# so in the full pipeline retry the test step a few times
+test_with_retry() {
+  for attempt in 1 2 3 4 5; do
+    if python models/test_best_model.py; then
+      return 0
+    fi
+    if [ "$attempt" -lt 5 ]; then
+      echo "W&B may still be processing the new runs. Retrying in 30s ($attempt/5)..."
+      sleep 30
+    fi
+  done
+  echo "ERROR: test step failed after 5 attempts."
+  exit 1
+}
+
 case "${1:-all}" in
   download) download ;;
   clean)  clean ;;
@@ -48,6 +64,6 @@ case "${1:-all}" in
   rf)     rf ;;
   logreg) logreg ;;
   test)   test ;;
-  all)    clean; upload; rf; logreg; test ;;
+  all)    clean; upload; rf; logreg; test_with_retry ;;
   *) echo "Unknown step '$1'. Use: download | clean | upload | rf | logreg | test | all"; exit 1 ;;
 esac
