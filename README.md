@@ -131,19 +131,17 @@ Add a step name to the end of the `docker run` command:
 | `app` | Launches the Streamlit front end (see below) |
 
 ### 10. Launch the Streamlit app
-The app predicts potability from five home-testable measurements (pH, hardness, chloramines, sulfate, conductivity), for one sample or a whole CSV. Run this after the pipeline has trained a random forest at least once:
+The app predicts potability from five home-testable measurements (pH, hardness, chloramines, sulfate, conductivity), for one sample or a whole CSV. It calls the deployed inference API, so no local model export, Kaggle/W&B credentials, or `.env` file is needed for this step:
 
 **Mac/Linux:**
 ```bash
-docker run --rm --env-file .env -p 8501:8501 \
-  -v "$(pwd)/Data:/app/Data" \
-  water-potability app
+docker run --rm -p 8501:8501 water-potability app
 ```
 **Windows (PowerShell, one line):**
 ```powershell
-docker run --rm --env-file .env -p 8501:8501 -v "${PWD}\Data:/app/Data" water-potability app
+docker run --rm -p 8501:8501 water-potability app
 ```
-Then open **http://localhost:8501** in your browser. On startup the container downloads the best random forest from your W&B project and packages it with the preprocessing steps; the Google Cloud key isn't needed for this step. Press **Ctrl+C** in the terminal to stop the app.
+Open **http://localhost:8501** in your browser. To use a different inference API, pass `-e WATER_POTABILITY_API_URL=<url>` to `docker run`. Press **Ctrl+C** in the terminal to stop the app.
 
 ### Troubleshooting
 - **"Cannot connect to the Docker daemon":** Docker Desktop isn't running.

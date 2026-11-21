@@ -49,9 +49,6 @@ export_model() {
 
 # Launch the Streamlit front end on port 8501
 app() {
-  if [ ! -f models/water_potability_pipeline.joblib ]; then
-    export_model
-  fi
   echo "Starting the app: open http://localhost:8501 in your browser"
   exec streamlit run app/streamlit_app.py \
     --server.address=0.0.0.0 --server.port=8501 \
