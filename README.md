@@ -4,6 +4,50 @@ Water potability (safety of its consumption) is a very common problem around the
 
 All required packages are in `requirements.txt` (NOTE: before installing google-cloud-storage please follow the steps under "Cloud Storage")
 
+## Frontend and API
+
+The **frontend** is deployed at: . To run it locally with Docker, follow the steps below.
+
+The **API** is deployed at: https://water-potability-api-492240240246.us-east1.run.app. To check API health, visit https://water-potability-api-492240240246.us-east1.run.app/health. For predictions, follow this sample code:
+
+```bash
+curl -s -X POST "https://water-potability-api-492240240246.us-east1.run.app/predict" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "ph": 7.0,
+    "Hardness": 180.0,
+    "Solids": 20000.0,
+    "Chloramines": 7.0,
+    "Sulfate": 330.0,
+    "Conductivity": 420.0,
+    "Organic_carbon": 14.0,
+    "Trihalomethanes": 66.0,
+    "Turbidity": 4.0
+  }'
+```
+
+or
+
+```python
+import requests
+
+url = "https://water-potability-api-492240240246.us-east1.run.app/predict"
+payload = {
+    "ph": 7.0,
+    "Hardness": 180.0,
+    "Solids": 20000.0,
+    "Chloramines": 7.0,
+    "Sulfate": 330.0,
+    "Conductivity": 420.0,
+    "Organic_carbon": 14.0,
+    "Trihalomethanes": 66.0,
+    "Turbidity": 4.0,
+}
+resp = requests.post(url, json=payload, timeout=30)
+resp.raise_for_status()
+print(resp.json())
+```
+
 ## Running with Docker (recommended)
 
 The whole pipeline (download data → clean → upload to cloud → random forest → logistic regression → test best model) runs in one Docker container. **Each user provides their own Kaggle, Weights & Biases, and Google Cloud credentials**; no keys are included in this repo or the image.
