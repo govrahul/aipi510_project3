@@ -16,3 +16,6 @@ artifacts/
 *.joblib
 # secrets
 .env
+
+# exported model used by the hosted Streamlit app
+!models/water_potability_pipeline.joblib
