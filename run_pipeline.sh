@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Runs one step of the pipeline, or all of them in order.
-# Usage: ./run_pipeline.sh [download|clean|upload|rf|logreg|test|all]
+# Usage: ./run_pipeline.sh [download|clean|upload|rf|logreg|test|all|export|app]
 # (clean downloads the data automatically if it isn't already in Data/)
 set -euo pipefail
 cd /app
@@ -41,6 +41,23 @@ rf()     { python models/random_forest/random_forest_baseline.py; }
 logreg() { python models/logistic_regression/logistic_regression.py; }
 test()   { python models/test_best_model.py; }
 
+# Build models/water_potability_pipeline.joblib (preprocessing + best random forest)
+export_model() {
+  download
+  python models/export_pipeline_model.py
+}
+
+# Launch the Streamlit front end on port 8501
+app() {
+  if [ ! -f models/water_potability_pipeline.joblib ]; then
+    export_model
+  fi
+  echo "Starting the app: open http://localhost:8501 in your browser"
+  exec streamlit run app/streamlit_app.py \
+    --server.address=0.0.0.0 --server.port=8501 \
+    --server.headless=true --browser.gatherUsageStats=false
+}
+
 # W&B can take a minute to show a just-finished run's metrics,
 # so in the full pipeline retry the test step a few times
 test_with_retry() {
@@ -65,5 +82,7 @@ case "${1:-all}" in
   logreg) logreg ;;
   test)   test ;;
   all)    clean; upload; rf; logreg; test_with_retry ;;
-  *) echo "Unknown step '$1'. Use: download | clean | upload | rf | logreg | test | all"; exit 1 ;;
+  export) export_model ;;
+  app)    app ;;
+  *) echo "Unknown step '$1'. Use: download | clean | upload | rf | logreg | test | all | export | app"; exit 1 ;;
 esac
