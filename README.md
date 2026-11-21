@@ -232,5 +232,12 @@ The model evaluation results are shown below:
 
 The best model was the **random forest** model, and its test metrics were F1 = 0.5219 and accuracy = 0.6509.
 
+## License & Data Attribution
+
+- **Code**: This repository's original code (the FastAPI service, Streamlit front end, and pipeline scripts) is licensed under the [MIT License](LICENSE).
+- **Dataset**: Based on [Water Potability](https://www.kaggle.com/datasets/developerghost/water-potability) by `DeveloperGhost` on Kaggle, published under **CC BY-NC-SA 4.0**.
+  - **Attribution**: Credit goes to `DeveloperGhost` on Kaggle.
+  - **Non-Commercial & Share-Alike**: Because the source dataset uses CC BY-NC-SA 4.0, non-commercial use applies to data/derivatives tied to it, and raw dataset files aren't redistributed under the MIT license.
+
 ---
 Developers: Rahul Govil and Daniel Yaari
