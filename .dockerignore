@@ -12,3 +12,5 @@ Data/eda_output/
 __pycache__/
 .vscode/
 .DS_Store
+# unhide the joblib file for the API
+!api/water_potability_pipeline.joblib
