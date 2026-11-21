@@ -83,6 +83,23 @@ Add a step name to the end of the `docker run` command:
 | `rf` | Trains the random forest baseline |
 | `logreg` | Trains the logistic regression |
 | `test` | Evaluates the best random forest run on the test set |
+| `export` | Builds `models/water_potability_pipeline.joblib` (preprocessing + best random forest) |
+| `app` | Launches the Streamlit front end (see below) |
+
+### 10. Launch the Streamlit app
+The app predicts potability from five home-testable measurements (pH, hardness, chloramines, sulfate, conductivity), for one sample or a whole CSV. Run this after the pipeline has trained a random forest at least once:
+
+**Mac/Linux:**
+```bash
+docker run --rm --env-file .env -p 8501:8501 \
+  -v "$(pwd)/Data:/app/Data" \
+  water-potability app
+```
+**Windows (PowerShell, one line):**
+```powershell
+docker run --rm --env-file .env -p 8501:8501 -v "${PWD}\Data:/app/Data" water-potability app
+```
+Then open **http://localhost:8501** in your browser. On startup the container downloads the best random forest from your W&B project and packages it with the preprocessing steps; the Google Cloud key isn't needed for this step. Press **Ctrl+C** in the terminal to stop the app.
 
 ### Troubleshooting
 - **"Cannot connect to the Docker daemon":** Docker Desktop isn't running.
@@ -90,6 +107,7 @@ Add a step name to the end of the `docker run` command:
 - **Google 403 / permission denied:** check that the service account has **Storage Object Admin** and that `GCS_BUCKET` matches your bucket name exactly.
 - **Kaggle 401 Unauthorized:** check `KAGGLE_USERNAME` and `KAGGLE_KEY`, or create a new token.
 - **Test step says a run has no `val_f1`:** W&B can take a minute to process new runs. The full pipeline retries automatically; when running `test` on its own, wait a minute and run it again.
+- **App page won't load at localhost:8501:** make sure you included `-p 8501:8501` and that nothing else is using port 8501.
 - **Changed `.env`?** Just run again. Rebuild (step 7) only after changing code or `requirements.txt`.
 
 ## Running locally (without Docker)
@@ -149,7 +167,13 @@ To export the random forest together with the preprocessing steps for inference,
 python models/export_pipeline_model.py
 ```
 
-This writes `models/water_potability_pipeline.joblib`.
+This writes `models/water_potability_pipeline.joblib`. The script uses the newest model in `artifacts/water-potability-rf:v*/` if one has been downloaded, or otherwise downloads the best random forest from W&B (set `RF_MODEL_PATH` to use a specific file).
+
+To launch the Streamlit front end locally after exporting:
+
+```bash
+streamlit run app/streamlit_app.py
+```
 
 To evaluate our best model, the random forest, run:
 

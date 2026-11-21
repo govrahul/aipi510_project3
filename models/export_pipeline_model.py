@@ -2,6 +2,7 @@
 Export a fitted preprocessing-and-random-forest pipeline for inference.
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -17,18 +18,53 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from Data.clean_data import RANDOM_STATE, build_preprocessor
 
 DATA_PATH = PROJECT_ROOT / "Data" / "water_potability.csv"
-MODEL_PATH = PROJECT_ROOT / "artifacts" / "water-potability-rf:v0" / "model.joblib"
+ARTIFACTS_DIR = PROJECT_ROOT / "artifacts"
 OUTPUT_PATH = (
     PROJECT_ROOT / "models" / "water_potability_pipeline.joblib"
 )
 TARGET_COLUMN = "Potability"
 
 
+def _artifact_version(path: Path) -> int:
+    """Version number from a folder name like 'water-potability-rf:v3'."""
+    try:
+        return int(path.parent.name.rsplit(":v", 1)[1])
+    except (IndexError, ValueError):
+        return -1
+
+
+def load_random_forest():
+    """Find the trained random forest, in this order:
+
+    1. RF_MODEL_PATH environment variable, if set
+    2. the newest local download in artifacts/water-potability-rf:v*/model.joblib
+    3. the best random_forest_baseline run on W&B (downloaded automatically)
+    """
+    env_path = os.environ.get("RF_MODEL_PATH")
+    if env_path:
+        if not Path(env_path).is_file():
+            raise FileNotFoundError(f"RF_MODEL_PATH does not exist: {env_path}")
+        print(f"Using random forest from RF_MODEL_PATH: {env_path}")
+        return joblib.load(env_path)
+
+    local_models = sorted(
+        ARTIFACTS_DIR.glob("water-potability-rf:v*/model.joblib"),
+        key=_artifact_version,
+    )
+    if local_models:
+        print(f"Using local random forest: {local_models[-1]}")
+        return joblib.load(local_models[-1])
+
+    print("No local random forest found; downloading the best one from W&B...")
+    from models.test_best_model import fetch_best_model_from_wandb
+
+    model, _, _, _ = fetch_best_model_from_wandb()
+    return model
+
+
 def main() -> None:
     if not DATA_PATH.is_file():
         raise FileNotFoundError(f"Dataset not found: {DATA_PATH}")
-    if not MODEL_PATH.is_file():
-        raise FileNotFoundError(f"Random forest model not found: {MODEL_PATH}")
 
     data = pd.read_csv(DATA_PATH)
     if TARGET_COLUMN not in data.columns:
@@ -45,11 +81,11 @@ def main() -> None:
     preprocessor.set_output(transform="pandas")
     preprocessor.fit(X_train)
 
-    classifier = joblib.load(MODEL_PATH)
+    classifier = load_random_forest()
     model_features = getattr(classifier, "feature_names_in_", None)
     if model_features is None:
         raise ValueError(
-            f"The random forest at {MODEL_PATH} does not expose its input feature names."
+            "The random forest does not expose its input feature names."
         )
 
     processed_features = preprocessor.get_feature_names_out().tolist()
@@ -85,6 +121,7 @@ def main() -> None:
     if not (actual_predictions == expected_predictions).all():
         raise RuntimeError("Exported pipeline predictions differ from the classifier.")
 
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(pipeline, OUTPUT_PATH)
     print(f"Saved preprocessing and random forest pipeline to {OUTPUT_PATH}")
 

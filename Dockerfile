@@ -17,6 +17,9 @@ COPY . .
 # Strip Windows line endings (CRLF) in case the repo was cloned on Windows
 RUN sed -i "s/\r$//" run_pipeline.sh && chmod +x run_pipeline.sh
 
+# Streamlit front end (used by the `app` step)
+EXPOSE 8501
+
 # Default: run the whole pipeline. Override with a step name, e.g. `docker run ... rf`
 ENTRYPOINT ["./run_pipeline.sh"]
 CMD ["all"]
