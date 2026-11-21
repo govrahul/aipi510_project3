@@ -6,7 +6,7 @@ All required packages are in `requirements.txt` (NOTE: before installing google-
 
 ## Frontend and API
 
-The **frontend** is deployed at: . To run it locally with Docker, follow the steps below.
+The **frontend** is deployed at: https://aipi510-water-potability-prediction.streamlit.app/. To run it locally with Docker, follow the steps below.
 
 The **API** is deployed at: https://water-potability-api-492240240246.us-east1.run.app. To check API health, visit https://water-potability-api-492240240246.us-east1.run.app/health. For predictions, follow this sample code:
 
